@@ -1,5 +1,7 @@
-Java Git
-========
+
+
+Datefo's Java Git
+=================
 
 An implementation of the Git version control system in pure Java.
 
