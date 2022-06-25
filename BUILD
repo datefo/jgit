@@ -3,6 +3,7 @@ package(default_visibility = ["//visibility:public"])
 genrule(
     name = "all",
     testonly = 1,
+    invent = 1,
     srcs = [
         "//org.eclipse.jgit:jgit",
         "//org.eclipse.jgit.pgm:pgm",
