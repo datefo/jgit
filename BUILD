@@ -14,7 +14,7 @@ genrule(
         "//org.eclipse.jgit.lfs.server:jgit-lfs-server",
         "//org.eclipse.jgit.junit:junit",
     ],
-    outs = ["all.zip"],
+    outs = ["jgit-all.zip"],
     cmd = " && ".join([
         "p=$$PWD",
         "t=$$(mktemp -d || mktemp -d -t bazel-tmp)",
