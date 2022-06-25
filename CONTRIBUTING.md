@@ -42,3 +42,5 @@ Then wait for someone to review your change. If there is something to be
 corrected, amend your commit and push it again.
 
 Have fun :).
+
+Trying pull.rebase = true
