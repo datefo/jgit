@@ -1,4 +1,4 @@
-
+Stage and chekcout
 
 Datefo's Java Git
 =================

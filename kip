@@ -1,0 +1,1375 @@
+[38;2;190;132;255mGIT-REBASE[0m[38;2;249;38;114m([0m[38;2;230;219;116m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m                     [0m[38;2;253;151;31mGit[0m[38;2;253;151;31m [0m[38;2;253;151;31mManual[0m[38;2;248;248;242m                     [0m[38;2;190;132;255mGIT-REBASE[0m[38;2;249;38;114m([0m[38;2;230;219;116m1[0m[38;2;249;38;114m)[0m
+
+[38;2;253;151;31mNAME[0m
+[38;2;248;248;242m       git-rebase - Reapply commits on top of another base tip[0m
+
+[38;2;253;151;31mSYNOPSIS[0m
+[38;2;248;248;242m       git rebase [0m[38;2;248;248;242m[[0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;249;38;114m|[0m[38;2;248;248;242m [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;248;248;242m<options>[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m <[0m[38;2;253;151;31mcmd[0m[38;2;248;248;242m>[0m[38;2;248;248;242m][0m
+[38;2;248;248;242m               [0m[38;2;248;248;242m[[0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m <[0m[38;2;253;151;31mnewbase[0m[38;2;248;248;242m> [0m[38;2;249;38;114m|[0m[38;2;248;248;242m [0m[38;2;166;226;46m--keep-base[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;248;248;242m<upstream> [0m[38;2;248;248;242m[[0m[38;2;248;248;242m<branch>[0m[38;2;248;248;242m][0m[38;2;248;248;242m][0m
+[38;2;248;248;242m       git rebase [0m[38;2;248;248;242m[[0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;249;38;114m|[0m[38;2;248;248;242m [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;248;248;242m<options>[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m <[0m[38;2;253;151;31mcmd[0m[38;2;248;248;242m>[0m[38;2;248;248;242m][0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m <[0m[38;2;253;151;31mnewbase[0m[38;2;248;248;242m>[0m[38;2;248;248;242m][0m
+[38;2;248;248;242m               [0m[38;2;166;226;46m--root[0m[38;2;248;248;242m [0m[38;2;248;248;242m[[0m[38;2;248;248;242m<branch>[0m[38;2;248;248;242m][0m
+[38;2;248;248;242m       git rebase ([0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m | [0m[38;2;166;226;46m--skip[0m[38;2;248;248;242m | [0m[38;2;166;226;46m--abort[0m[38;2;248;248;242m | [0m[38;2;166;226;46m--quit[0m[38;2;248;248;242m | [0m[38;2;166;226;46m--edit-todo[0m[38;2;248;248;242m | [0m[38;2;166;226;46m--show-current-patch[0m[38;2;248;248;242m)[0m
+
+[38;2;253;151;31mDESCRIPTION[0m
+[38;2;248;248;242m       If <branch> is specified, git rebase will perform an automatic git[0m
+[38;2;248;248;242m       switch <branch> before doing anything else. Otherwise it remains on the[0m
+[38;2;248;248;242m       current branch.[0m
+
+[38;2;248;248;242m       If <upstream> is not specified, the upstream configured in[0m
+[38;2;248;248;242m       branch.<name>.remote and branch.<name>.merge options will be used (see[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46mgit-config[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m for details) and the [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m option is assumed. If[0m
+[38;2;248;248;242m       you are currently not on any branch or if the current branch does not[0m
+[38;2;248;248;242m       have a configured upstream, the rebase will abort.[0m
+
+[38;2;248;248;242m       All changes made by commits in the current branch but that are not in[0m
+[38;2;248;248;242m       <upstream> are saved to a temporary area. This is the same set of[0m
+[38;2;248;248;242m       commits that would be shown by git log <upstream>..HEAD; or by git log[0m
+[38;2;248;248;242m       'fork_point'..HEAD, if [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m is active (see the description on[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m [0m[38;2;253;151;31mbelow[0m[38;2;248;248;242m); [0m[38;2;253;151;31mor[0m[38;2;248;248;242m [0m[38;2;253;151;31mby[0m[38;2;248;248;242m [0m[38;2;253;151;31mgit[0m[38;2;248;248;242m [0m[38;2;253;151;31mlog[0m[38;2;248;248;242m [0m[38;2;253;151;31mHEAD[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46mif[0m[38;2;248;248;242m [0m[38;2;253;151;31mthe[0m[38;2;248;248;242m [0m[38;2;253;151;31m--root[0m[38;2;248;248;242m [0m[38;2;253;151;31moption[0m[38;2;248;248;242m [0m[38;2;253;151;31mis[0m
+[38;2;248;248;242m       specified.[0m
+
+[38;2;248;248;242m       The current branch is reset to <upstream>, or <newbase> if the [0m[38;2;166;226;46m--onto[0m
+[38;2;248;248;242m       option was supplied. This has the exact same effect as git reset [0m[38;2;166;226;46m--hard[0m
+[38;2;248;248;242m       <upstream> (or <newbase>). ORIG_HEAD is set to point at the tip of the[0m
+[38;2;248;248;242m       branch before the reset.[0m
+
+[38;2;248;248;242m       The commits that were previously saved into the temporary area are then[0m
+[38;2;248;248;242m       reapplied to the current branch, one by one, in order. Note that any[0m
+[38;2;248;248;242m       commits in HEAD which introduce the same textual changes as a commit in[0m
+[38;2;248;248;242m       HEAD..<upstream> are omitted (i.e., a patch already accepted upstream[0m
+[38;2;248;248;242m       with a different commit message or timestamp will be skipped).[0m
+
+[38;2;248;248;242m       It is possible that a merge failure will prevent this process from[0m
+[38;2;248;248;242m       being completely automatic. You will have to resolve any such merge[0m
+[38;2;248;248;242m       failure and run git rebase [0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m. Another option is to bypass the[0m
+[38;2;248;248;242m       commit that caused the merge failure with git rebase [0m[38;2;166;226;46m--skip[0m[38;2;248;248;242m. To check[0m
+[38;2;248;248;242m       out the original <branch> and remove the .git/rebase-apply working[0m
+[38;2;248;248;242m       files, use the command git rebase [0m[38;2;166;226;46m--abort[0m[38;2;248;248;242m instead.[0m
+
+[38;2;248;248;242m       Assume the following history exists and the current branch is "topic":[0m
+
+[38;2;248;248;242m                     A---B---C topic[0m
+[38;2;248;248;242m                    /[0m
+[38;2;248;248;242m               D---E---F---G master[0m
+
+[38;2;248;248;242m       From this point, the result of either of the following commands:[0m
+
+[38;2;248;248;242m           git rebase master[0m
+[38;2;248;248;242m           git rebase master topic[0m
+
+[38;2;248;248;242m       would be:[0m
+
+[38;2;248;248;242m                             A'[0m[38;2;166;226;46m--B[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--C[0m[38;2;248;248;242m' topic[0m
+[38;2;248;248;242m                            /[0m
+[38;2;248;248;242m               D---E---F---G master[0m
+
+[38;2;248;248;242m       NOTE: The latter form is just a short-hand of git checkout topic[0m
+[38;2;248;248;242m       followed by git rebase master. When rebase exits topic will remain the[0m
+[38;2;248;248;242m       checked-out branch.[0m
+
+[38;2;248;248;242m       If the upstream branch already contains a change you have made (e.g.,[0m
+[38;2;248;248;242m       because you mailed a patch which was applied upstream), then that[0m
+[38;2;248;248;242m       commit will be skipped and warnings will be issued (if the merge[0m
+[38;2;248;248;242m       backend is used). For example, running git rebase master on the[0m
+[38;2;248;248;242m       following history (in which A' and A introduce the same set of changes,[0m
+[38;2;248;248;242m       but have different committer information):[0m
+
+[38;2;248;248;242m                     A---B---C topic[0m
+[38;2;248;248;242m                    /[0m
+[38;2;248;248;242m               D---E---A'---F master[0m
+
+[38;2;248;248;242m       will result in:[0m
+
+[38;2;248;248;242m                              B'---C' topic[0m
+[38;2;248;248;242m                             /[0m
+[38;2;248;248;242m               D---E---A'---F master[0m
+
+[38;2;248;248;242m       Here is how you would transplant a topic branch based on one branch to[0m
+[38;2;248;248;242m       another, to pretend that you forked the topic branch from the latter[0m
+[38;2;248;248;242m       branch, using rebase [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       First let’s assume your topic is based on branch next. For example, a[0m
+[38;2;248;248;242m       feature developed in topic depends on some functionality which is found[0m
+[38;2;248;248;242m       in next.[0m
+
+[38;2;248;248;242m               o---o---o---o---o  master[0m
+[38;2;248;248;242m                    \[0m
+[38;2;248;248;242m                     o---o---o---o---o  next[0m
+[38;2;248;248;242m                                      \[0m
+[38;2;248;248;242m                                       o---o---o  topic[0m
+
+[38;2;248;248;242m       We want to make topic forked from branch master; for example, because[0m
+[38;2;248;248;242m       the functionality on which topic depends was merged into the more[0m
+[38;2;248;248;242m       stable master branch. We want our tree to look like this:[0m
+
+[38;2;248;248;242m               o---o---o---o---o  master[0m
+[38;2;248;248;242m                   |            \[0m
+[38;2;248;248;242m                   |             o'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'  topic[0m
+[38;2;248;248;242m                    \[0m
+[38;2;248;248;242m                     o---o---o---o---o  next[0m
+
+[38;2;248;248;242m       We can get this using the following command:[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m master next topic[0m
+
+[38;2;248;248;242m       Another example of [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m option is to rebase part of a branch. If we[0m
+[38;2;248;248;242m       have the following situation:[0m
+
+[38;2;248;248;242m                                       H---I---J topicB[0m
+[38;2;248;248;242m                                      /[0m
+[38;2;248;248;242m                             E---F---G  topicA[0m
+[38;2;248;248;242m                            /[0m
+[38;2;248;248;242m               A---B---C---D  master[0m
+
+[38;2;248;248;242m       then the command[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m master topicA topicB[0m
+
+[38;2;248;248;242m       would result in:[0m
+
+[38;2;248;248;242m                            H'[0m[38;2;166;226;46m--I[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--J[0m[38;2;248;248;242m'  topicB[0m
+[38;2;248;248;242m                           /[0m
+[38;2;248;248;242m                           | E---F---G  topicA[0m
+[38;2;248;248;242m                           |/[0m
+[38;2;248;248;242m               A---B---C---D  master[0m
+
+[38;2;248;248;242m       This is useful when topicB does not depend on topicA.[0m
+
+[38;2;248;248;242m       A range of commits could also be removed with rebase. If we have the[0m
+[38;2;248;248;242m       following situation:[0m
+
+[38;2;248;248;242m               E---F---G---H---I---J  topicA[0m
+
+[38;2;248;248;242m       then the command[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m topicA~5 topicA~3 topicA[0m
+
+[38;2;248;248;242m       would result in the removal of commits F and G:[0m
+
+[38;2;248;248;242m               E---H'---I'---J'  topicA[0m
+
+[38;2;248;248;242m       This is useful if F and G were flawed in some way, or should not be[0m
+[38;2;248;248;242m       part of topicA. Note that the argument to [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m and the <upstream>[0m
+[38;2;248;248;242m       parameter can be any valid commit-ish.[0m
+
+[38;2;248;248;242m       In case of conflict, git rebase will stop at the first problematic[0m
+[38;2;248;248;242m       commit and leave conflict markers in the tree. You can use git diff to[0m
+[38;2;248;248;242m       locate the markers (<<<<<<) and make edits to resolve the conflict. For[0m
+[38;2;248;248;242m       each file you edit, you need to tell Git that the conflict has been[0m
+[38;2;248;248;242m       resolved, typically this would be done with[0m
+
+[38;2;248;248;242m           git add <filename>[0m
+
+[38;2;248;248;242m       After resolving the conflict manually and updating the index with the[0m
+[38;2;248;248;242m       desired resolution, you can continue the rebasing process with[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m--continue[0m
+
+[38;2;248;248;242m       Alternatively, you can undo the git rebase with[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m--abort[0m
+
+[38;2;253;151;31mOPTIONS[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m <[0m[38;2;253;151;31mnewbase[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           Starting point at which to create the new commits. If the [0m[38;2;166;226;46m--onto[0m
+[38;2;248;248;242m           option is not specified, the starting point is <upstream>. May be[0m
+[38;2;248;248;242m           any valid commit, and not just an existing branch name.[0m
+
+[38;2;248;248;242m           As a special case, you may use "A...B" as a shortcut for the merge[0m
+[38;2;248;248;242m           base of A and B if there is exactly one merge base. You can leave[0m
+[38;2;248;248;242m           out at most one of A and B, in which case it defaults to HEAD.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--keep-base[0m
+[38;2;248;248;242m           Set the starting point at which to create the new commits to the[0m
+[38;2;248;248;242m           merge base of <upstream> <branch>. Running git rebase [0m[38;2;166;226;46m--keep-base[0m
+[38;2;248;248;242m           <upstream> <branch> is equivalent to running git rebase [0m[38;2;166;226;46m--onto[0m
+[38;2;248;248;242m           <upstream>... <upstream>.[0m
+
+[38;2;248;248;242m           This option is useful in the case where one is developing a feature[0m
+[38;2;248;248;242m           on top of an upstream branch. While the feature is being worked on,[0m
+[38;2;248;248;242m           the upstream branch may advance and it may not be the best idea to[0m
+[38;2;248;248;242m           keep rebasing on top of the upstream but to keep the base commit[0m
+[38;2;248;248;242m           as-is.[0m
+
+[38;2;248;248;242m           Although both this option and [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m find the merge base[0m
+[38;2;248;248;242m           between <upstream> and <branch>, this option uses the merge base as[0m
+[38;2;248;248;242m           the starting point on which new commits will be created, whereas[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m uses the merge base to determine the set of commits[0m
+[38;2;248;248;242m           which will be rebased.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       <upstream>[0m
+[38;2;248;248;242m           Upstream branch to compare against. May be any valid commit, not[0m
+[38;2;248;248;242m           just an existing branch name. Defaults to the configured upstream[0m
+[38;2;248;248;242m           for the current branch.[0m
+
+[38;2;248;248;242m       <branch>[0m
+[38;2;248;248;242m           Working branch; defaults to HEAD.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--continue[0m
+[38;2;248;248;242m           Restart the rebasing process after having resolved a merge[0m
+[38;2;248;248;242m           conflict.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--abort[0m
+[38;2;248;248;242m           Abort the rebase operation and reset HEAD to the original branch.[0m
+[38;2;248;248;242m           If <branch> was provided when the rebase operation was started,[0m
+[38;2;248;248;242m           then HEAD will be reset to <branch>. Otherwise HEAD will be reset[0m
+[38;2;248;248;242m           to where it was when the rebase operation was started.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--quit[0m
+[38;2;248;248;242m           Abort the rebase operation but HEAD is not reset back to the[0m
+[38;2;248;248;242m           original branch. The index and working tree are also left unchanged[0m
+[38;2;248;248;242m           as a result. If a temporary stash entry was created using[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--autostash[0m[38;2;248;248;242m, it will be saved to the stash list.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--apply[0m
+[38;2;248;248;242m           Use applying strategies to rebase (calling git-am internally). This[0m
+[38;2;248;248;242m           option may become a no-op in the future once the merge backend[0m
+[38;2;248;248;242m           handles everything the apply one does.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--empty[0m[38;2;249;38;114m=[0m[38;2;248;248;242m{[0m[38;2;253;151;31mdrop[0m[38;2;248;248;242m,[0m[38;2;166;226;46mkeep[0m[38;2;248;248;242m,[0m[38;2;166;226;46mask[0m[38;2;248;248;242m}[0m
+[38;2;248;248;242m           How to handle commits that are not empty to start and are not clean[0m
+[38;2;248;248;242m           cherry-picks of any upstream commit, but which become empty after[0m
+[38;2;248;248;242m           rebasing (because they contain a subset of already upstream[0m
+[38;2;248;248;242m           changes). With drop (the default), commits that become empty are[0m
+[38;2;248;248;242m           dropped. With keep, such commits are kept. With ask (implied by[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m), the rebase will halt when an empty commit is[0m
+[38;2;248;248;242m           applied allowing you to choose whether to drop it, edit files more,[0m
+[38;2;248;248;242m           or just commit the empty changes. Other options, like [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m, will[0m
+[38;2;248;248;242m           use the default of drop unless [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m/[0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m is explicitly[0m
+[38;2;248;248;242m           specified.[0m
+
+[38;2;248;248;242m           Note that commits which start empty are kept (unless[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--no-keep-empty[0m[38;2;248;248;242m is specified), and commits which are clean[0m
+[38;2;248;248;242m           cherry-picks (as determined by git log [0m[38;2;166;226;46m--cherry-mark[0m[38;2;248;248;242m ...) are[0m
+[38;2;248;248;242m           detected and dropped as a preliminary step (unless[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--reapply-cherry-picks[0m[38;2;248;248;242m is passed).[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--no-keep-empty[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--keep-empty[0m
+[38;2;248;248;242m           Do not keep commits that start empty before the rebase (i.e. that[0m
+[38;2;248;248;242m           do not change anything from its parent) in the result. The default[0m
+[38;2;248;248;242m           is to keep commits which start empty, since creating such commits[0m
+[38;2;248;248;242m           requires passing the [0m[38;2;166;226;46m--allow-empty[0m[38;2;248;248;242m override flag to git commit,[0m
+[38;2;248;248;242m           signifying that a user is very intentionally creating such a commit[0m
+[38;2;248;248;242m           and thus wants to keep it.[0m
+
+[38;2;248;248;242m           Usage of this flag will probably be rare, since you can get rid of[0m
+[38;2;248;248;242m           commits that start empty by just firing up an interactive rebase[0m
+[38;2;248;248;242m           and removing the lines corresponding to the commits you don’t want.[0m
+[38;2;248;248;242m           This flag exists as a convenient shortcut, such as for cases where[0m
+[38;2;248;248;242m           external tools generate many empty commits and you want them all[0m
+[38;2;248;248;242m           removed.[0m
+
+[38;2;248;248;242m           For commits which do not start empty but become empty after[0m
+[38;2;248;248;242m           rebasing, see the [0m[38;2;166;226;46m--empty[0m[38;2;248;248;242m flag.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--reapply-cherry-picks[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-reapply-cherry-picks[0m
+[38;2;248;248;242m           Reapply all clean cherry-picks of any upstream commit instead of[0m
+[38;2;248;248;242m           preemptively dropping them. (If these commits then become empty[0m
+[38;2;248;248;242m           after rebasing, because they contain a subset of already upstream[0m
+[38;2;248;248;242m           changes, the behavior towards them is controlled by the [0m[38;2;166;226;46m--empty[0m
+[38;2;248;248;242m           flag.)[0m
+
+[38;2;248;248;242m           By default (or if [0m[38;2;166;226;46m--no-reapply-cherry-picks[0m[38;2;248;248;242m is given), these[0m
+[38;2;248;248;242m           commits will be automatically dropped. Because this necessitates[0m
+[38;2;248;248;242m           reading all upstream commits, this can be expensive in repos with a[0m
+[38;2;248;248;242m           large number of upstream commits that need to be read. When using[0m
+[38;2;248;248;242m           the merge backend, warnings will be issued for each dropped commit[0m
+[38;2;248;248;242m           (unless [0m[38;2;166;226;46m--quiet[0m[38;2;248;248;242m is given). Advice will also be issued unless[0m
+[38;2;248;248;242m           advice.skippedCherryPicks is set to false (see [0m[38;2;166;226;46mgit-config[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m).[0m
+
+[38;2;248;248;242m           [0m[38;2;166;226;46m--reapply-cherry-picks[0m[38;2;248;248;242m allows rebase to forgo reading all upstream[0m
+[38;2;248;248;242m           commits, potentially improving performance.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--allow-empty-message[0m
+[38;2;248;248;242m           No-op. Rebasing commits with an empty message used to fail and this[0m
+[38;2;248;248;242m           option would override that behavior, allowing commits with empty[0m
+[38;2;248;248;242m           messages to be rebased. Now commits with an empty message do not[0m
+[38;2;248;248;242m           cause rebasing to halt.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--skip[0m
+[38;2;248;248;242m           Restart the rebasing process by skipping the current patch.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--edit-todo[0m
+[38;2;248;248;242m           Edit the todo list during an interactive rebase.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--show-current-patch[0m
+[38;2;248;248;242m           Show the current patch in an interactive rebase or when rebase is[0m
+[38;2;248;248;242m           stopped because of conflicts. This is the equivalent of git show[0m
+[38;2;248;248;242m           REBASE_HEAD.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-m[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--merge[0m
+[38;2;248;248;242m           Using merging strategies to rebase (default).[0m
+
+[38;2;248;248;242m           Note that a rebase merge works by replaying each commit from the[0m
+[38;2;248;248;242m           working branch on top of the <upstream> branch. Because of this,[0m
+[38;2;248;248;242m           when a merge conflict happens, the side reported as ours is the[0m
+[38;2;248;248;242m           so-far rebased series, starting with <upstream>, and theirs is the[0m
+[38;2;248;248;242m           working branch. In other words, the sides are swapped.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-s[0m[38;2;248;248;242m <[0m[38;2;253;151;31mstrategy[0m[38;2;248;248;242m>[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--strategy[0m[38;2;249;38;114m=[0m[38;2;248;248;242m<[0m[38;2;253;151;31mstrategy[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           Use the given merge strategy, instead of the default ort. This[0m
+[38;2;248;248;242m           implies [0m[38;2;166;226;46m--merge[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           Because git rebase replays each commit from the working branch on[0m
+[38;2;248;248;242m           top of the <upstream> branch using the given strategy, using the[0m
+[38;2;248;248;242m           ours strategy simply empties all patches from the <branch>, which[0m
+[38;2;248;248;242m           makes little sense.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-X[0m[38;2;248;248;242m <[0m[38;2;253;151;31mstrategy-option[0m[38;2;248;248;242m>[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--strategy-option[0m[38;2;249;38;114m=[0m[38;2;248;248;242m<[0m[38;2;253;151;31mstrategy-option[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           Pass the <strategy-option> through to the merge strategy. This[0m
+[38;2;248;248;242m           implies [0m[38;2;166;226;46m--merge[0m[38;2;248;248;242m and, if no strategy has been specified, [0m[38;2;166;226;46m-s[0m[38;2;248;248;242m ort.[0m
+[38;2;248;248;242m           Note the reversal of ours and theirs as noted above for the [0m[38;2;166;226;46m-m[0m
+[38;2;248;248;242m           option.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--rerere-autoupdate[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-rerere-autoupdate[0m
+[38;2;248;248;242m           Allow the rerere mechanism to update the index with the result of[0m
+[38;2;248;248;242m           auto-conflict resolution if possible.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-S[0m[38;2;166;226;46m[<keyid>][0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--gpg-sign[0m[38;2;248;248;242m[[0m[38;2;249;38;114m=[0m[38;2;248;248;242m<[0m[38;2;253;151;31mkeyid[0m[38;2;248;248;242m>[0m[38;2;248;248;242m][0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-gpg-sign[0m
+[38;2;248;248;242m           GPG-sign commits. The keyid argument is optional and defaults to[0m
+[38;2;248;248;242m           the committer identity; if specified, it must be stuck to the[0m
+[38;2;248;248;242m           option without a space.  [0m[38;2;166;226;46m--no-gpg-sign[0m[38;2;248;248;242m is useful to countermand[0m
+[38;2;248;248;242m           both commit.gpgSign configuration variable, and earlier [0m[38;2;166;226;46m--gpg-sign[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-q[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--quiet[0m
+[38;2;248;248;242m           Be quiet. Implies [0m[38;2;166;226;46m--no-stat[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-v[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--verbose[0m
+[38;2;248;248;242m           Be verbose. Implies [0m[38;2;166;226;46m--stat[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--stat[0m
+[38;2;248;248;242m           Show a diffstat of what changed upstream since the last rebase. The[0m
+[38;2;248;248;242m           diffstat is also controlled by the configuration option[0m
+[38;2;248;248;242m           rebase.stat.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-n[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-stat[0m
+[38;2;248;248;242m           Do not show a diffstat as part of the rebase process.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--no-verify[0m
+[38;2;248;248;242m           This option bypasses the pre-rebase hook. See also [0m[38;2;166;226;46mgithooks[0m[38;2;249;38;114m([0m[38;2;190;132;255m5[0m[38;2;249;38;114m)[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--verify[0m
+[38;2;248;248;242m           Allows the pre-rebase hook to run, which is the default. This[0m
+[38;2;248;248;242m           option can be used to override [0m[38;2;166;226;46m--no-verify[0m[38;2;248;248;242m. See also [0m[38;2;166;226;46mgithooks[0m[38;2;249;38;114m([0m[38;2;190;132;255m5[0m[38;2;249;38;114m)[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m<[0m[38;2;166;226;46mn[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           Ensure at least <n> lines of surrounding context match before and[0m
+[38;2;248;248;242m           after each change. When fewer lines of surrounding context exist[0m
+[38;2;248;248;242m           they all must match. By default no context is ever ignored. Implies[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--apply[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--no-ff[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--force-rebase[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m-f[0m
+[38;2;248;248;242m           Individually replay all rebased commits instead of fast-forwarding[0m
+[38;2;248;248;242m           over the unchanged ones. This ensures that the entire history of[0m
+[38;2;248;248;242m           the rebased branch is composed of new commits.[0m
+
+[38;2;248;248;242m           You may find this helpful after reverting a topic branch merge, as[0m
+[38;2;248;248;242m           this option recreates the topic branch with fresh commits so it can[0m
+[38;2;248;248;242m           be remerged successfully without needing to "revert the reversion"[0m
+[38;2;248;248;242m           (see the revert-a-faulty-merge How-To[1] for details).[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-fork-point[0m
+[38;2;248;248;242m           Use reflog to find a better common ancestor between <upstream> and[0m
+[38;2;248;248;242m           <branch> when calculating which commits have been introduced by[0m
+[38;2;248;248;242m           <branch>.[0m
+
+[38;2;248;248;242m           When [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m is active, fork_point will be used instead of[0m
+[38;2;248;248;242m           <upstream> to calculate the set of commits to rebase, where[0m
+[38;2;248;248;242m           fork_point is the result of git merge-base [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m <upstream>[0m
+[38;2;248;248;242m           <branch> command (see [0m[38;2;166;226;46mgit-merge-base[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m). If fork_point ends up[0m
+[38;2;248;248;242m           being empty, the <upstream> will be used as a fallback.[0m
+
+[38;2;248;248;242m           If <upstream> is given on the command line, then the default is[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--no-fork-point[0m[38;2;248;248;242m, otherwise the default is [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m. See also[0m
+[38;2;248;248;242m           rebase.forkpoint in [0m[38;2;166;226;46mgit-config[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           If your branch was based on <upstream> but <upstream> was rewound[0m
+[38;2;248;248;242m           and your branch contains commits which were dropped, this option[0m
+[38;2;248;248;242m           can be used with [0m[38;2;166;226;46m--keep-base[0m[38;2;248;248;242m in order to drop those commits from[0m
+[38;2;248;248;242m           your branch.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--ignore-whitespace[0m
+[38;2;248;248;242m           Ignore whitespace differences when trying to reconcile differences.[0m
+[38;2;248;248;242m           Currently, each backend implements an approximation of this[0m
+[38;2;248;248;242m           behavior:[0m
+
+[38;2;248;248;242m           apply backend: When applying a patch, ignore changes in whitespace[0m
+[38;2;248;248;242m           in context lines. Unfortunately, this means that if the "old" lines[0m
+[38;2;248;248;242m           being replaced by the patch differ only in whitespace from the[0m
+[38;2;248;248;242m           existing file, you will get a merge conflict instead of a[0m
+[38;2;248;248;242m           successful patch application.[0m
+
+[38;2;248;248;242m           merge backend: Treat lines with only whitespace changes as[0m
+[38;2;248;248;242m           unchanged when merging. Unfortunately, this means that any patch[0m
+[38;2;248;248;242m           hunks that were intended to modify whitespace and nothing else will[0m
+[38;2;248;248;242m           be dropped, even if the other side had no changes that conflicted.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--whitespace[0m[38;2;249;38;114m=[0m[38;2;248;248;242m<[0m[38;2;253;151;31moption[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           This flag is passed to the git apply program (see [0m[38;2;166;226;46mgit-apply[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m)[0m
+[38;2;248;248;242m           that applies the patch. Implies [0m[38;2;166;226;46m--apply[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--committer-date-is-author-date[0m
+[38;2;248;248;242m           Instead of using the current time as the committer date, use the[0m
+[38;2;248;248;242m           author date of the commit being rebased as the committer date. This[0m
+[38;2;248;248;242m           option implies [0m[38;2;166;226;46m--force-rebase[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--ignore-date[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--reset-author-date[0m
+[38;2;248;248;242m           Instead of using the author date of the original commit, use the[0m
+[38;2;248;248;242m           current time as the author date of the rebased commit. This option[0m
+[38;2;248;248;242m           implies [0m[38;2;166;226;46m--force-rebase[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--signoff[0m
+[38;2;248;248;242m           Add a Signed-off-by trailer to all the rebased commits. Note that[0m
+[38;2;248;248;242m           if [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m is given then only commits marked to be picked,[0m
+[38;2;248;248;242m           edited or reworded will have the trailer added.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--interactive[0m
+[38;2;248;248;242m           Make a list of the commits which are about to be rebased. Let the[0m
+[38;2;248;248;242m           user edit that list before rebasing. This mode can also be used to[0m
+[38;2;248;248;242m           split commits (see SPLITTING COMMITS below).[0m
+
+[38;2;248;248;242m           The commit list format can be changed by setting the configuration[0m
+[38;2;248;248;242m           option rebase.instructionFormat. A customized instruction format[0m
+[38;2;248;248;242m           will automatically have the long commit hash prepended to the[0m
+[38;2;248;248;242m           format.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-r[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--rebase-merges[0m[38;2;248;248;242m[[0m[38;2;249;38;114m=[0m[38;2;248;248;242m([0m[38;2;253;151;31mrebase-cousins[0m[38;2;249;38;114m|[0m[38;2;253;151;31mno-rebase-cousins[0m[38;2;248;248;242m)[0m[38;2;248;248;242m][0m
+[38;2;248;248;242m           By default, a rebase will simply drop merge commits from the todo[0m
+[38;2;248;248;242m           list, and put the rebased commits into a single, linear branch.[0m
+[38;2;248;248;242m           With [0m[38;2;166;226;46m--rebase-merges[0m[38;2;248;248;242m, the rebase will instead try to preserve the[0m
+[38;2;248;248;242m           branching structure within the commits that are to be rebased, by[0m
+[38;2;248;248;242m           recreating the merge commits. Any resolved merge conflicts or[0m
+[38;2;248;248;242m           manual amendments in these merge commits will have to be[0m
+[38;2;248;248;242m           resolved/re-applied manually.[0m
+
+[38;2;248;248;242m           By default, or when no-rebase-cousins was specified, commits which[0m
+[38;2;248;248;242m           do not have <upstream> as direct ancestor will keep their original[0m
+[38;2;248;248;242m           branch point, i.e. commits that would be excluded by [0m[38;2;166;226;46mgit-log[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m's[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--ancestry-path[0m[38;2;248;248;242m option will keep their original ancestry by[0m
+[38;2;248;248;242m           default. If the rebase-cousins mode is turned on, such commits are[0m
+[38;2;248;248;242m           instead rebased onto <upstream> (or <onto>, if specified).[0m
+
+[38;2;248;248;242m           It is currently only possible to recreate the merge commits using[0m
+[38;2;248;248;242m           the ort merge strategy; different merge strategies can be used only[0m
+[38;2;248;248;242m           via explicit exec git merge [0m[38;2;166;226;46m-s[0m[38;2;248;248;242m <strategy> [...]  commands.[0m
+
+[38;2;248;248;242m           See also REBASING MERGES and INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m-x[0m[38;2;248;248;242m <[0m[38;2;253;151;31mcmd[0m[38;2;248;248;242m>[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m <[0m[38;2;253;151;31mcmd[0m[38;2;248;248;242m>[0m
+[38;2;248;248;242m           Append "exec <cmd>" after each line creating a commit in the final[0m
+[38;2;248;248;242m           history. <cmd> will be interpreted as one or more shell commands.[0m
+[38;2;248;248;242m           Any command that fails will interrupt the rebase, with exit code 1.[0m
+
+[38;2;248;248;242m           You may execute several commands by either using one instance of[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m with several commands:[0m
+
+[38;2;248;248;242m               git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m "cmd1 && cmd2 && ..."[0m
+
+[38;2;248;248;242m           or by giving more than one [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m:[0m
+
+[38;2;248;248;242m               git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m "cmd1" [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m "cmd2" [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m ...[0m
+
+[38;2;248;248;242m           If [0m[38;2;166;226;46m--autosquash[0m[38;2;248;248;242m is used, "exec" lines will not be appended for the[0m
+[38;2;248;248;242m           intermediate commits, and will only appear at the end of each[0m
+[38;2;248;248;242m           squash/fixup series.[0m
+
+[38;2;248;248;242m           This uses the [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m machinery internally, but it can be run[0m
+[38;2;248;248;242m           without an explicit [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--root[0m
+[38;2;248;248;242m           Rebase all commits reachable from <branch>, instead of limiting[0m
+[38;2;248;248;242m           them with an <upstream>. This allows you to rebase the root[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46mcommit[0m[38;2;249;38;114m([0m[38;2;190;132;255ms[0m[38;2;249;38;114m)[0m[38;2;248;248;242m on a branch. When used with [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m, it will skip changes[0m
+[38;2;248;248;242m           already contained in <newbase> (instead of <upstream>) whereas[0m
+[38;2;248;248;242m           without [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m it will operate on every change.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--autosquash[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-autosquash[0m
+[38;2;248;248;242m           When the commit log message begins with "squash! ..." or "fixup![0m
+[38;2;248;248;242m           ..." or "amend! ...", and there is already a commit in the todo[0m
+[38;2;248;248;242m           list that matches the same ..., automatically modify the todo list[0m
+[38;2;248;248;242m           of rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m, so that the commit marked for squashing comes right[0m
+[38;2;248;248;242m           after the commit to be modified, and change the action of the moved[0m
+[38;2;248;248;242m           commit from pick to squash or fixup or fixup [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m respectively. A[0m
+[38;2;248;248;242m           commit matches the ...  if the commit subject matches, or if the[0m
+[38;2;248;248;242m           ...  refers to the commit’s hash. As a fall-back, partial matches[0m
+[38;2;248;248;242m           of the commit subject work, too. The recommended way to create[0m
+[38;2;248;248;242m           fixup/amend/squash commits is by using the [0m[38;2;166;226;46m--fixup[0m[38;2;248;248;242m, [0m[38;2;166;226;46m--fixup[0m[38;2;249;38;114m=[0m[38;2;253;151;31mamend:[0m
+[38;2;248;248;242m           or [0m[38;2;166;226;46m--fixup[0m[38;2;249;38;114m=[0m[38;2;253;151;31mreword:[0m[38;2;248;248;242m and [0m[38;2;166;226;46m--squash[0m[38;2;248;248;242m options respectively of git-[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46mcommit[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           If the [0m[38;2;166;226;46m--autosquash[0m[38;2;248;248;242m option is enabled by default using the[0m
+[38;2;248;248;242m           configuration variable rebase.autoSquash, this option can be used[0m
+[38;2;248;248;242m           to override and disable this setting.[0m
+
+[38;2;248;248;242m           See also INCOMPATIBLE OPTIONS below.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--autostash[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-autostash[0m
+[38;2;248;248;242m           Automatically create a temporary stash entry before the operation[0m
+[38;2;248;248;242m           begins, and apply it after the operation ends. This means that you[0m
+[38;2;248;248;242m           can run rebase on a dirty worktree. However, use with care: the[0m
+[38;2;248;248;242m           final stash application after a successful rebase might result in[0m
+[38;2;248;248;242m           non-trivial conflicts.[0m
+
+[38;2;248;248;242m       [0m[38;2;166;226;46m--reschedule-failed-exec[0m[38;2;248;248;242m,[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-reschedule-failed-exec[0m
+[38;2;248;248;242m           Automatically reschedule exec commands that failed. This only makes[0m
+[38;2;248;248;242m           sense in interactive mode (or when an [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m option was provided).[0m
+
+[38;2;248;248;242m           Even though this option applies once a rebase is started, it’s set[0m
+[38;2;248;248;242m           for the whole rebase at the start based on either the[0m
+[38;2;248;248;242m           rebase.rescheduleFailedExec configuration (see [0m[38;2;166;226;46mgit-config[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m or[0m
+[38;2;248;248;242m           "CONFIGURATION" below) or whether this option is provided.[0m
+[38;2;248;248;242m           Otherwise an explicit [0m[38;2;166;226;46m--no-reschedule-failed-exec[0m[38;2;248;248;242m at the start[0m
+[38;2;248;248;242m           would be overridden by the presence of[0m
+[38;2;248;248;242m           rebase.rescheduleFailedExec=true configuration.[0m
+
+[38;2;253;151;31mINCOMPATIBLE OPTIONS[0m
+[38;2;248;248;242m       The following options:[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--apply[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--whitespace[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m-C[0m
+
+[38;2;248;248;242m       are incompatible with the following options:[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--merge[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--strategy[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--strategy-option[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--allow-empty-message[0m
+
+[38;2;248;248;242m       •   --[no-]autosquash[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--rebase-merges[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--interactive[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--exec[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--no-keep-empty[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--empty[0m[38;2;249;38;114m=[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--reapply-cherry-picks[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--edit-todo[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--root[0m[38;2;248;248;242m when used in combination with [0m[38;2;166;226;46m--onto[0m
+
+[38;2;248;248;242m       In addition, the following pairs of options are incompatible:[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--keep-base[0m[38;2;248;248;242m and [0m[38;2;166;226;46m--onto[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--keep-base[0m[38;2;248;248;242m and [0m[38;2;166;226;46m--root[0m
+
+[38;2;248;248;242m       •   [0m[38;2;166;226;46m--fork-point[0m[38;2;248;248;242m and [0m[38;2;166;226;46m--root[0m
+
+[38;2;253;151;31mBEHAVIORAL DIFFERENCES[0m
+[38;2;248;248;242m       git rebase has two primary backends: apply and merge. (The apply[0m
+[38;2;248;248;242m       backend used to be known as the am backend, but the name led to[0m
+[38;2;248;248;242m       confusion as it looks like a verb instead of a noun. Also, the merge[0m
+[38;2;248;248;242m       backend used to be known as the interactive backend, but it is now used[0m
+[38;2;248;248;242m       for non-interactive cases as well. Both were renamed based on[0m
+[38;2;248;248;242m       lower-level functionality that underpinned each.) There are some subtle[0m
+[38;2;248;248;242m       differences in how these two backends behave:[0m
+
+[38;2;248;248;242m   Empty commits[0m
+[38;2;248;248;242m       The apply backend unfortunately drops intentionally empty commits, i.e.[0m
+[38;2;248;248;242m       commits that started empty, though these are rare in practice. It also[0m
+[38;2;248;248;242m       drops commits that become empty and has no option for controlling this[0m
+[38;2;248;248;242m       behavior.[0m
+
+[38;2;248;248;242m       The merge backend keeps intentionally empty commits by default (though[0m
+[38;2;248;248;242m       with [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m they are marked as empty in the todo list editor, or they can[0m
+[38;2;248;248;242m       be dropped automatically with [0m[38;2;166;226;46m--no-keep-empty[0m[38;2;248;248;242m).[0m
+
+[38;2;248;248;242m       Similar to the apply backend, by default the merge backend drops[0m
+[38;2;248;248;242m       commits that become empty unless [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m/[0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m is specified (in[0m
+[38;2;248;248;242m       which case it stops and asks the user what to do). The merge backend[0m
+[38;2;248;248;242m       also has an [0m[38;2;166;226;46m--empty[0m[38;2;249;38;114m=[0m[38;2;253;151;31m{drop[0m[38;2;248;248;242m,keep,ask} option for changing the behavior of[0m
+[38;2;248;248;242m       handling commits that become empty.[0m
+
+[38;2;248;248;242m   Directory rename detection[0m
+[38;2;248;248;242m       Due to the lack of accurate tree information (arising from constructing[0m
+[38;2;248;248;242m       fake ancestors with the limited information available in patches),[0m
+[38;2;248;248;242m       directory rename detection is disabled in the apply backend. Disabled[0m
+[38;2;248;248;242m       directory rename detection means that if one side of history renames a[0m
+[38;2;248;248;242m       directory and the other adds new files to the old directory, then the[0m
+[38;2;248;248;242m       new files will be left behind in the old directory without any warning[0m
+[38;2;248;248;242m       at the time of rebasing that you may want to move these files into the[0m
+[38;2;248;248;242m       new directory.[0m
+
+[38;2;248;248;242m       Directory rename detection works with the merge backend to provide you[0m
+[38;2;248;248;242m       warnings in such cases.[0m
+
+[38;2;248;248;242m   Context[0m
+[38;2;248;248;242m       The apply backend works by creating a sequence of patches (by calling[0m
+[38;2;248;248;242m       format-patch internally), and then applying the patches in sequence[0m
+[38;2;248;248;242m       (calling am internally). Patches are composed of multiple hunks, each[0m
+[38;2;248;248;242m       with line numbers, a context region, and the actual changes. The line[0m
+[38;2;248;248;242m       numbers have to be taken with some fuzz, since the other side will[0m
+[38;2;248;248;242m       likely have inserted or deleted lines earlier in the file. The context[0m
+[38;2;248;248;242m       region is meant to help find how to adjust the line numbers in order to[0m
+[38;2;248;248;242m       apply the changes to the right lines. However, if multiple areas of the[0m
+[38;2;248;248;242m       code have the same surrounding lines of context, the wrong one can be[0m
+[38;2;248;248;242m       picked. There are real-world cases where this has caused commits to be[0m
+[38;2;248;248;242m       reapplied incorrectly with no conflicts reported. Setting diff.context[0m
+[38;2;248;248;242m       to a larger value may prevent such types of problems, but increases the[0m
+[38;2;248;248;242m       chance of spurious conflicts (since it will require more lines of[0m
+[38;2;248;248;242m       matching context to apply).[0m
+
+[38;2;248;248;242m       The merge backend works with a full copy of each relevant file,[0m
+[38;2;248;248;242m       insulating it from these types of problems.[0m
+
+[38;2;248;248;242m   Labelling of conflicts markers[0m
+[38;2;248;248;242m       When there are content conflicts, the merge machinery tries to annotate[0m
+[38;2;248;248;242m       each side’s conflict markers with the commits where the content came[0m
+[38;2;248;248;242m       from. Since the apply backend drops the original information about the[0m
+[38;2;248;248;242m       rebased commits and their parents (and instead generates new fake[0m
+[38;2;248;248;242m       commits based off limited information in the generated patches), those[0m
+[38;2;248;248;242m       commits cannot be identified; instead it has to fall back to a commit[0m
+[38;2;248;248;242m       summary. Also, when merge.conflictStyle is set to diff3 or zdiff3, the[0m
+[38;2;248;248;242m       apply backend will use "constructed merge base" to label the content[0m
+[38;2;248;248;242m       from the merge base, and thus provide no information about the merge[0m
+[38;2;248;248;242m       base commit whatsoever.[0m
+
+[38;2;248;248;242m       The merge backend works with the full commits on both sides of history[0m
+[38;2;248;248;242m       and thus has no such limitations.[0m
+
+[38;2;248;248;242m   Hooks[0m
+[38;2;248;248;242m       The apply backend has not traditionally called the post-commit hook,[0m
+[38;2;248;248;242m       while the merge backend has. Both have called the post-checkout hook,[0m
+[38;2;248;248;242m       though the merge backend has squelched its output. Further, both[0m
+[38;2;248;248;242m       backends only call the post-checkout hook with the starting point[0m
+[38;2;248;248;242m       commit of the rebase, not the intermediate commits nor the final[0m
+[38;2;248;248;242m       commit. In each case, the calling of these hooks was by accident of[0m
+[38;2;248;248;242m       implementation rather than by design (both backends were originally[0m
+[38;2;248;248;242m       implemented as shell scripts and happened to invoke other commands like[0m
+[38;2;248;248;242m       git checkout or git commit that would call the hooks). Both backends[0m
+[38;2;248;248;242m       should have the same behavior, though it is not entirely clear which,[0m
+[38;2;248;248;242m       if any, is correct. We will likely make rebase stop calling either of[0m
+[38;2;248;248;242m       these hooks in the future.[0m
+
+[38;2;248;248;242m   Interruptability[0m
+[38;2;248;248;242m       The apply backend has safety problems with an ill-timed interrupt; if[0m
+[38;2;248;248;242m       the user presses Ctrl-C at the wrong time to try to abort the rebase,[0m
+[38;2;248;248;242m       the rebase can enter a state where it cannot be aborted with a[0m
+[38;2;248;248;242m       subsequent git rebase [0m[38;2;166;226;46m--abort[0m[38;2;248;248;242m. The merge backend does not appear to[0m
+[38;2;248;248;242m       suffer from the same shortcoming. (See[0m
+[38;2;248;248;242m       https://lore.kernel.org/git/20200207132152.GC2868@szeder.dev/ for[0m
+[38;2;248;248;242m       details.)[0m
+
+[38;2;248;248;242m   Commit Rewording[0m
+[38;2;248;248;242m       When a conflict occurs while rebasing, rebase stops and asks the user[0m
+[38;2;248;248;242m       to resolve. Since the user may need to make notable changes while[0m
+[38;2;248;248;242m       resolving conflicts, after conflicts are resolved and the user has run[0m
+[38;2;248;248;242m       git rebase [0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m, the rebase should open an editor and ask the[0m
+[38;2;248;248;242m       user to update the commit message. The merge backend does this, while[0m
+[38;2;248;248;242m       the apply backend blindly applies the original commit message.[0m
+
+[38;2;248;248;242m   Miscellaneous differences[0m
+[38;2;248;248;242m       There are a few more behavioral differences that most folks would[0m
+[38;2;248;248;242m       probably consider inconsequential but which are mentioned for[0m
+[38;2;248;248;242m       completeness:[0m
+
+[38;2;248;248;242m       •   Reflog: The two backends will use different wording when describing[0m
+[38;2;248;248;242m           the changes made in the reflog, though both will make use of the[0m
+[38;2;248;248;242m           word "rebase".[0m
+
+[38;2;248;248;242m       •   Progress, informational, and error messages: The two backends[0m
+[38;2;248;248;242m           provide slightly different progress and informational messages.[0m
+[38;2;248;248;242m           Also, the apply backend writes error messages (such as "Your files[0m
+[38;2;248;248;242m           would be overwritten...") to stdout, while the merge backend writes[0m
+[38;2;248;248;242m           them to stderr.[0m
+
+[38;2;248;248;242m       •   State directories: The two backends keep their state in different[0m
+[38;2;248;248;242m           directories under .git/[0m
+
+[38;2;253;151;31mMERGE STRATEGIES[0m
+[38;2;248;248;242m       The merge mechanism (git merge and git pull commands) allows the[0m
+[38;2;248;248;242m       backend merge strategies to be chosen with [0m[38;2;166;226;46m-s[0m[38;2;248;248;242m option. Some strategies[0m
+[38;2;248;248;242m       can also take their own options, which can be passed by giving[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46m-X[0m[38;2;248;248;242m<option> arguments to git merge and/or git pull.[0m
+
+[38;2;248;248;242m       ort[0m
+[38;2;248;248;242m           This is the default merge strategy when pulling or merging one[0m
+[38;2;248;248;242m           branch. This strategy can only resolve two heads using a 3-way[0m
+[38;2;248;248;242m           merge algorithm. When there is more than one common ancestor that[0m
+[38;2;248;248;242m           can be used for 3-way merge, it creates a merged tree of the common[0m
+[38;2;248;248;242m           ancestors and uses that as the reference tree for the 3-way merge.[0m
+[38;2;248;248;242m           This has been reported to result in fewer merge conflicts without[0m
+[38;2;248;248;242m           causing mismerges by tests done on actual merge commits taken from[0m
+[38;2;248;248;242m           Linux 2.6 kernel development history. Additionally this strategy[0m
+[38;2;248;248;242m           can detect and handle merges involving renames. It does not make[0m
+[38;2;248;248;242m           use of detected copies. The name for this algorithm is an acronym[0m
+[38;2;248;248;242m           ("Ostensibly Recursive’s Twin") and came from the fact that it was[0m
+[38;2;248;248;242m           written as a replacement for the previous default algorithm,[0m
+[38;2;248;248;242m           recursive.[0m
+
+[38;2;248;248;242m           The ort strategy can take the following options:[0m
+
+[38;2;248;248;242m           ours[0m
+[38;2;248;248;242m               This option forces conflicting hunks to be auto-resolved[0m
+[38;2;248;248;242m               cleanly by favoring our version. Changes from the other tree[0m
+[38;2;248;248;242m               that do not conflict with our side are reflected in the merge[0m
+[38;2;248;248;242m               result. For a binary file, the entire contents are taken from[0m
+[38;2;248;248;242m               our side.[0m
+
+[38;2;248;248;242m               This should not be confused with the ours merge strategy, which[0m
+[38;2;248;248;242m               does not even look at what the other tree contains at all. It[0m
+[38;2;248;248;242m               discards everything the other tree did, declaring our history[0m
+[38;2;248;248;242m               contains all that happened in it.[0m
+
+[38;2;248;248;242m           theirs[0m
+[38;2;248;248;242m               This is the opposite of ours; note that, unlike ours, there is[0m
+[38;2;248;248;242m               no theirs merge strategy to confuse this merge option with.[0m
+
+[38;2;248;248;242m           ignore-space-change, ignore-all-space, ignore-space-at-eol,[0m
+[38;2;248;248;242m           ignore-cr-at-eol[0m
+[38;2;248;248;242m               Treats lines with the indicated type of whitespace change as[0m
+[38;2;248;248;242m               unchanged for the sake of a three-way merge. Whitespace changes[0m
+[38;2;248;248;242m               mixed with other changes to a line are not ignored. See also[0m
+[38;2;248;248;242m               [0m[38;2;166;226;46mgit-diff[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m [0m[38;2;166;226;46m-b[0m[38;2;248;248;242m, [0m[38;2;166;226;46m-w[0m[38;2;248;248;242m, [0m[38;2;166;226;46m--ignore-space-at-eol[0m[38;2;248;248;242m, and[0m
+[38;2;248;248;242m               [0m[38;2;166;226;46m--ignore-cr-at-eol[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m               •   If their version only introduces whitespace changes to a[0m
+[38;2;248;248;242m                   line, our version is used;[0m
+
+[38;2;248;248;242m               •   If our version introduces whitespace changes but their[0m
+[38;2;248;248;242m                   version includes a substantial change, their version is[0m
+[38;2;248;248;242m                   used;[0m
+
+[38;2;248;248;242m               •   Otherwise, the merge proceeds in the usual way.[0m
+
+[38;2;248;248;242m           renormalize[0m
+[38;2;248;248;242m               This runs a virtual check-out and check-in of all three stages[0m
+[38;2;248;248;242m               of a file when resolving a three-way merge. This option is[0m
+[38;2;248;248;242m               meant to be used when merging branches with different clean[0m
+[38;2;248;248;242m               filters or end-of-line normalization rules. See "Merging[0m
+[38;2;248;248;242m               branches with differing checkin/checkout attributes" in[0m
+[38;2;248;248;242m               [0m[38;2;166;226;46mgitattributes[0m[38;2;249;38;114m([0m[38;2;190;132;255m5[0m[38;2;249;38;114m)[0m[38;2;248;248;242m for details.[0m
+
+[38;2;248;248;242m           no-renormalize[0m
+[38;2;248;248;242m               Disables the renormalize option. This overrides the[0m
+[38;2;248;248;242m               merge.renormalize configuration variable.[0m
+
+[38;2;248;248;242m           find-renames[=<n>][0m
+[38;2;248;248;242m               Turn on rename detection, optionally setting the similarity[0m
+[38;2;248;248;242m               threshold. This is the default. This overrides the[0m
+[38;2;248;248;242m               merge.renames configuration variable. See also [0m[38;2;166;226;46mgit-diff[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m
+[38;2;248;248;242m               [0m[38;2;166;226;46m--find-renames[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m           rename-threshold=<n>[0m
+[38;2;248;248;242m               Deprecated synonym for find-renames=<n>.[0m
+
+[38;2;248;248;242m           subtree[=<path>][0m
+[38;2;248;248;242m               This option is a more advanced form of subtree strategy, where[0m
+[38;2;248;248;242m               the strategy makes a guess on how two trees must be shifted to[0m
+[38;2;248;248;242m               match with each other when merging. Instead, the specified path[0m
+[38;2;248;248;242m               is prefixed (or stripped from the beginning) to make the shape[0m
+[38;2;248;248;242m               of two trees to match.[0m
+
+[38;2;248;248;242m       recursive[0m
+[38;2;248;248;242m           This can only resolve two heads using a 3-way merge algorithm. When[0m
+[38;2;248;248;242m           there is more than one common ancestor that can be used for 3-way[0m
+[38;2;248;248;242m           merge, it creates a merged tree of the common ancestors and uses[0m
+[38;2;248;248;242m           that as the reference tree for the 3-way merge. This has been[0m
+[38;2;248;248;242m           reported to result in fewer merge conflicts without causing[0m
+[38;2;248;248;242m           mismerges by tests done on actual merge commits taken from Linux[0m
+[38;2;248;248;242m           2.6 kernel development history. Additionally this can detect and[0m
+[38;2;248;248;242m           handle merges involving renames. It does not make use of detected[0m
+[38;2;248;248;242m           copies. This was the default strategy for resolving two heads from[0m
+[38;2;248;248;242m           Git v0.99.9k until v2.33.0.[0m
+
+[38;2;248;248;242m           The recursive strategy takes the same options as ort. However,[0m
+[38;2;248;248;242m           there are three additional options that ort ignores (not documented[0m
+[38;2;248;248;242m           above) that are potentially useful with the recursive strategy:[0m
+
+[38;2;248;248;242m           patience[0m
+[38;2;248;248;242m               Deprecated synonym for diff-algorithm=patience.[0m
+
+[38;2;248;248;242m           diff-algorithm=[patience|minimal|histogram|myers][0m
+[38;2;248;248;242m               Use a different diff algorithm while merging, which can help[0m
+[38;2;248;248;242m               avoid mismerges that occur due to unimportant matching lines[0m
+[38;2;248;248;242m               (such as braces from distinct functions). See also [0m[38;2;166;226;46mgit-diff[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m
+[38;2;248;248;242m               [0m[38;2;166;226;46m--diff-algorithm[0m[38;2;248;248;242m. Note that ort specifically uses[0m
+[38;2;248;248;242m               diff-algorithm=histogram, while recursive defaults to the[0m
+[38;2;248;248;242m               diff.algorithm config setting.[0m
+
+[38;2;248;248;242m           no-renames[0m
+[38;2;248;248;242m               Turn off rename detection. This overrides the merge.renames[0m
+[38;2;248;248;242m               configuration variable. See also [0m[38;2;166;226;46mgit-diff[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m [0m[38;2;166;226;46m--no-renames[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       resolve[0m
+[38;2;248;248;242m           This can only resolve two heads (i.e. the current branch and[0m
+[38;2;248;248;242m           another branch you pulled from) using a 3-way merge algorithm. It[0m
+[38;2;248;248;242m           tries to carefully detect criss-cross merge ambiguities. It does[0m
+[38;2;248;248;242m           not handle renames.[0m
+
+[38;2;248;248;242m       octopus[0m
+[38;2;248;248;242m           This resolves cases with more than two heads, but refuses to do a[0m
+[38;2;248;248;242m           complex merge that needs manual resolution. It is primarily meant[0m
+[38;2;248;248;242m           to be used for bundling topic branch heads together. This is the[0m
+[38;2;248;248;242m           default merge strategy when pulling or merging more than one[0m
+[38;2;248;248;242m           branch.[0m
+
+[38;2;248;248;242m       ours[0m
+[38;2;248;248;242m           This resolves any number of heads, but the resulting tree of the[0m
+[38;2;248;248;242m           merge is always that of the current branch head, effectively[0m
+[38;2;248;248;242m           ignoring all changes from all other branches. It is meant to be[0m
+[38;2;248;248;242m           used to supersede old development history of side branches. Note[0m
+[38;2;248;248;242m           that this is different from the [0m[38;2;166;226;46m-Xours[0m[38;2;248;248;242m option to the recursive[0m
+[38;2;248;248;242m           merge strategy.[0m
+
+[38;2;248;248;242m       subtree[0m
+[38;2;248;248;242m           This is a modified ort strategy. When merging trees A and B, if B[0m
+[38;2;248;248;242m           corresponds to a subtree of A, B is first adjusted to match the[0m
+[38;2;248;248;242m           tree structure of A, instead of reading the trees at the same[0m
+[38;2;248;248;242m           level. This adjustment is also done to the common ancestor tree.[0m
+
+[38;2;248;248;242m       With the strategies that use 3-way merge (including the default, ort),[0m
+[38;2;248;248;242m       if a change is made on both branches, but later reverted on one of the[0m
+[38;2;248;248;242m       branches, that change will be present in the merged result; some people[0m
+[38;2;248;248;242m       find this behavior confusing. It occurs because only the heads and the[0m
+[38;2;248;248;242m       merge base are considered when performing a merge, not the individual[0m
+[38;2;248;248;242m       commits. The merge algorithm therefore considers the reverted change as[0m
+[38;2;248;248;242m       no change at all, and substitutes the changed version instead.[0m
+
+[38;2;253;151;31mNOTES[0m
+[38;2;248;248;242m       You should understand the implications of using git rebase on a[0m
+[38;2;248;248;242m       repository that you share. See also RECOVERING FROM UPSTREAM REBASE[0m
+[38;2;248;248;242m       below.[0m
+
+[38;2;248;248;242m       When the git-rebase command is run, it will first execute a[0m
+[38;2;248;248;242m       "pre-rebase" hook if one exists. You can use this hook to do sanity[0m
+[38;2;248;248;242m       checks and reject the rebase if it isn’t appropriate. Please see the[0m
+[38;2;248;248;242m       template pre-rebase hook script for an example.[0m
+
+[38;2;248;248;242m       Upon completion, <branch> will be the current branch.[0m
+
+[38;2;253;151;31mINTERACTIVE MODE[0m
+[38;2;248;248;242m       Rebasing interactively means that you have a chance to edit the commits[0m
+[38;2;248;248;242m       which are rebased. You can reorder the commits, and you can remove them[0m
+[38;2;248;248;242m       (weeding out bad or otherwise unwanted patches).[0m
+
+[38;2;248;248;242m       The interactive mode is meant for this type of workflow:[0m
+
+[38;2;248;248;242m        1. have a wonderful idea[0m
+
+[38;2;248;248;242m        2. hack on the code[0m
+
+[38;2;248;248;242m        3. prepare a series for submission[0m
+
+[38;2;248;248;242m        4. submit[0m
+
+[38;2;248;248;242m       where point 2. consists of several instances of[0m
+
+[38;2;248;248;242m       a) regular use[0m
+
+[38;2;248;248;242m        1. finish something worthy of a commit[0m
+
+[38;2;248;248;242m        2. commit[0m
+
+[38;2;248;248;242m       b) independent fixup[0m
+
+[38;2;248;248;242m        1. realize that something does not work[0m
+
+[38;2;248;248;242m        2. fix that[0m
+
+[38;2;248;248;242m        3. commit it[0m
+
+[38;2;248;248;242m       Sometimes the thing fixed in b.2. cannot be amended to the not-quite[0m
+[38;2;248;248;242m       perfect commit it fixes, because that commit is buried deeply in a[0m
+[38;2;248;248;242m       patch series. That is exactly what interactive rebase is for: use it[0m
+[38;2;248;248;242m       after plenty of "a"s and "b"s, by rearranging and editing commits, and[0m
+[38;2;248;248;242m       squashing multiple commits into one.[0m
+
+[38;2;248;248;242m       Start it with the last commit you want to retain as-is:[0m
+
+[38;2;248;248;242m           git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m <after-this-commit>[0m
+
+[38;2;248;248;242m       An editor will be fired up with all the commits in your current branch[0m
+[38;2;248;248;242m       (ignoring merge commits), which come after the given commit. You can[0m
+[38;2;248;248;242m       reorder the commits in this list to your heart’s content, and you can[0m
+[38;2;248;248;242m       remove them. The list looks more or less like this:[0m
+
+[38;2;248;248;242m           pick deadbee The oneline of this commit[0m
+[38;2;248;248;242m           pick fa1afe1 The oneline of the next commit[0m
+[38;2;248;248;242m           ...[0m
+
+[38;2;248;248;242m       The oneline descriptions are purely for your pleasure; git rebase will[0m
+[38;2;248;248;242m       not look at them but at the commit names ("deadbee" and "fa1afe1" in[0m
+[38;2;248;248;242m       this example), so do not delete or edit the names.[0m
+
+[38;2;248;248;242m       By replacing the command "pick" with the command "edit", you can tell[0m
+[38;2;248;248;242m       git rebase to stop after applying that commit, so that you can edit the[0m
+[38;2;248;248;242m       files and/or the commit message, amend the commit, and continue[0m
+[38;2;248;248;242m       rebasing.[0m
+
+[38;2;248;248;242m       To interrupt the rebase (just like an "edit" command would do, but[0m
+[38;2;248;248;242m       without cherry-picking any commit first), use the "break" command.[0m
+
+[38;2;248;248;242m       If you just want to edit the commit message for a commit, replace the[0m
+[38;2;248;248;242m       command "pick" with the command "reword".[0m
+
+[38;2;248;248;242m       To drop a commit, replace the command "pick" with "drop", or just[0m
+[38;2;248;248;242m       delete the matching line.[0m
+
+[38;2;248;248;242m       If you want to fold two or more commits into one, replace the command[0m
+[38;2;248;248;242m       "pick" for the second and subsequent commits with "squash" or "fixup".[0m
+[38;2;248;248;242m       If the commits had different authors, the folded commit will be[0m
+[38;2;248;248;242m       attributed to the author of the first commit. The suggested commit[0m
+[38;2;248;248;242m       message for the folded commit is the concatenation of the first[0m
+[38;2;248;248;242m       commit’s message with those identified by "squash" commands, omitting[0m
+[38;2;248;248;242m       the messages of commits identified by "fixup" commands, unless "fixup[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m" is used. In that case the suggested commit message is only the[0m
+[38;2;248;248;242m       message of the "fixup [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m" commit, and an editor is opened allowing you[0m
+[38;2;248;248;242m       to edit the message. The contents (patch) of the "fixup [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m" commit are[0m
+[38;2;248;248;242m       still incorporated into the folded commit. If there is more than one[0m
+[38;2;248;248;242m       "fixup [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m" commit, the message from the final one is used. You can also[0m
+[38;2;248;248;242m       use "fixup [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m" to get the same behavior as "fixup [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m" except without[0m
+[38;2;248;248;242m       opening an editor.[0m
+
+[38;2;248;248;242m       git rebase will stop when "pick" has been replaced with "edit" or when[0m
+[38;2;248;248;242m       a command fails due to merge errors. When you are done editing and/or[0m
+[38;2;248;248;242m       resolving conflicts you can continue with git rebase [0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       For example, if you want to reorder the last 5 commits, such that what[0m
+[38;2;248;248;242m       was HEAD~4 becomes the new HEAD. To achieve that, you would call git[0m
+[38;2;248;248;242m       rebase like this:[0m
+
+[38;2;248;248;242m           $ git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m HEAD~5[0m
+
+[38;2;248;248;242m       And move the first patch to the end of the list.[0m
+
+[38;2;248;248;242m       You might want to recreate merge commits, e.g. if you have a history[0m
+[38;2;248;248;242m       like this:[0m
+
+[38;2;248;248;242m                      X[0m
+[38;2;248;248;242m                       \[0m
+[38;2;248;248;242m                    A---M---B[0m
+[38;2;248;248;242m                   /[0m
+[38;2;248;248;242m           ---o---O---P---Q[0m
+
+[38;2;248;248;242m       Suppose you want to rebase the side branch starting at "A" to "Q". Make[0m
+[38;2;248;248;242m       sure that the current HEAD is "B", and call[0m
+
+[38;2;248;248;242m           $ git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;166;226;46m-r[0m[38;2;248;248;242m [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m Q O[0m
+
+[38;2;248;248;242m       Reordering and editing commits usually creates untested intermediate[0m
+[38;2;248;248;242m       steps. You may want to check that your history editing did not break[0m
+[38;2;248;248;242m       anything by running a test, or at least recompiling at intermediate[0m
+[38;2;248;248;242m       points in history by using the "exec" command (shortcut "x"). You may[0m
+[38;2;248;248;242m       do so by creating a todo list like this one:[0m
+
+[38;2;248;248;242m           pick deadbee Implement feature XXX[0m
+[38;2;248;248;242m           fixup f1a5c00 Fix to feature XXX[0m
+[38;2;248;248;242m           exec make[0m
+[38;2;248;248;242m           pick c0ffeee The oneline of the next commit[0m
+[38;2;248;248;242m           edit deadbab The oneline of the commit after[0m
+[38;2;248;248;242m           exec cd subdir; make test[0m
+[38;2;248;248;242m           ...[0m
+
+[38;2;248;248;242m       The interactive rebase will stop when a command fails (i.e. exits with[0m
+[38;2;248;248;242m       non-0 status) to give you an opportunity to fix the problem. You can[0m
+[38;2;248;248;242m       continue with git rebase [0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       The "exec" command launches the command in a shell (the one specified[0m
+[38;2;248;248;242m       in [0m[38;2;255;255;255m$[0m[38;2;190;132;255mSHELL[0m[38;2;248;248;242m, or the default shell if [0m[38;2;255;255;255m$[0m[38;2;190;132;255mSHELL[0m[38;2;248;248;242m is not set), so you can use[0m
+[38;2;248;248;242m       shell features (like "cd", ">", ";" ...). The command is run from the[0m
+[38;2;248;248;242m       root of the working tree.[0m
+
+[38;2;248;248;242m           $ git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m "make test"[0m
+
+[38;2;248;248;242m       This command lets you check that intermediate commits are compilable.[0m
+[38;2;248;248;242m       The todo list becomes like that:[0m
+
+[38;2;248;248;242m           pick 5928aea one[0m
+[38;2;248;248;242m           exec make test[0m
+[38;2;248;248;242m           pick 04d0fda two[0m
+[38;2;248;248;242m           exec make test[0m
+[38;2;248;248;242m           pick ba46169 three[0m
+[38;2;248;248;242m           exec make test[0m
+[38;2;248;248;242m           pick f4593f9 four[0m
+[38;2;248;248;242m           exec make test[0m
+
+[38;2;253;151;31mSPLITTING COMMITS[0m
+[38;2;248;248;242m       In interactive mode, you can mark commits with the action "edit".[0m
+[38;2;248;248;242m       However, this does not necessarily mean that git rebase expects the[0m
+[38;2;248;248;242m       result of this edit to be exactly one commit. Indeed, you can undo the[0m
+[38;2;248;248;242m       commit, or you can add other commits. This can be used to split a[0m
+[38;2;248;248;242m       commit into two:[0m
+
+[38;2;248;248;242m       •   Start an interactive rebase with git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m <commit>^, where[0m
+[38;2;248;248;242m           <commit> is the commit you want to split. In fact, any commit range[0m
+[38;2;248;248;242m           will do, as long as it contains that commit.[0m
+
+[38;2;248;248;242m       •   Mark the commit you want to split with the action "edit".[0m
+
+[38;2;248;248;242m       •   When it comes to editing that commit, execute git reset HEAD^. The[0m
+[38;2;248;248;242m           effect is that the HEAD is rewound by one, and the index follows[0m
+[38;2;248;248;242m           suit. However, the working tree stays the same.[0m
+
+[38;2;248;248;242m       •   Now add the changes to the index that you want to have in the first[0m
+[38;2;248;248;242m           commit. You can use git add (possibly interactively) or git gui (or[0m
+[38;2;248;248;242m           both) to do that.[0m
+
+[38;2;248;248;242m       •   Commit the now-current index with whatever commit message is[0m
+[38;2;248;248;242m           appropriate now.[0m
+
+[38;2;248;248;242m       •   Repeat the last two steps until your working tree is clean.[0m
+
+[38;2;248;248;242m       •   Continue the rebase with git rebase [0m[38;2;166;226;46m--continue[0m[38;2;248;248;242m.[0m
+
+[38;2;248;248;242m       If you are not absolutely sure that the intermediate revisions are[0m
+[38;2;248;248;242m       consistent (they compile, pass the testsuite, etc.) you should use git[0m
+[38;2;248;248;242m       stash to stash away the not-yet-committed changes after each commit,[0m
+[38;2;248;248;242m       test, and amend the commit if fixes are necessary.[0m
+
+[38;2;253;151;31mRECOVERING FROM UPSTREAM REBASE[0m
+[38;2;248;248;242m       Rebasing (or any other form of rewriting) a branch that others have[0m
+[38;2;248;248;242m       based work on is a bad idea: anyone downstream of it is forced to[0m
+[38;2;248;248;242m       manually fix their history. This section explains how to do the fix[0m
+[38;2;248;248;242m       from the downstream’s point of view. The real fix, however, would be to[0m
+[38;2;248;248;242m       avoid rebasing the upstream in the first place.[0m
+
+[38;2;248;248;242m       To illustrate, suppose you are in a situation where someone develops a[0m
+[38;2;248;248;242m       subsystem branch, and you are working on a topic that is dependent on[0m
+[38;2;248;248;242m       this subsystem. You might end up with a history like the following:[0m
+
+[38;2;248;248;242m               o---o---o---o---o---o---o---o  master[0m
+[38;2;248;248;242m                    \[0m
+[38;2;248;248;242m                     o---o---o---o---o  subsystem[0m
+[38;2;248;248;242m                                      \[0m
+[38;2;248;248;242m                                       *---*---*  topic[0m
+
+[38;2;248;248;242m       If subsystem is rebased against master, the following happens:[0m
+
+[38;2;248;248;242m               o---o---o---o---o---o---o---o  master[0m
+[38;2;248;248;242m                    \                       \[0m
+[38;2;248;248;242m                     o---o---o---o---o       o'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'  subsystem[0m
+[38;2;248;248;242m                                      \[0m
+[38;2;248;248;242m                                       *---*---*  topic[0m
+
+[38;2;248;248;242m       If you now continue development as usual, and eventually merge topic to[0m
+[38;2;248;248;242m       subsystem, the commits from subsystem will remain duplicated forever:[0m
+
+[38;2;248;248;242m               o---o---o---o---o---o---o---o  master[0m
+[38;2;248;248;242m                    \                       \[0m
+[38;2;248;248;242m                     o---o---o---o---o       o'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--M[0m[38;2;248;248;242m  subsystem[0m
+[38;2;248;248;242m                                      \                         /[0m
+[38;2;248;248;242m                                       *---*---*-..........-*--*  topic[0m
+
+[38;2;248;248;242m       Such duplicates are generally frowned upon because they clutter up[0m
+[38;2;248;248;242m       history, making it harder to follow. To clean things up, you need to[0m
+[38;2;248;248;242m       transplant the commits on topic to the new subsystem tip, i.e., rebase[0m
+[38;2;248;248;242m       topic. This becomes a ripple effect: anyone downstream from topic is[0m
+[38;2;248;248;242m       forced to rebase too, and so on![0m
+
+[38;2;248;248;242m       There are two kinds of fixes, discussed in the following subsections:[0m
+
+[38;2;248;248;242m       Easy case: The changes are literally the same.[0m
+[38;2;248;248;242m           This happens if the subsystem rebase was a simple rebase and had no[0m
+[38;2;248;248;242m           conflicts.[0m
+
+[38;2;248;248;242m       Hard case: The changes are not the same.[0m
+[38;2;248;248;242m           This happens if the subsystem rebase had conflicts, or used[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46m--interactive[0m[38;2;248;248;242m to omit, edit, squash, or fixup commits; or if the[0m
+[38;2;248;248;242m           upstream used one of commit [0m[38;2;166;226;46m--amend[0m[38;2;248;248;242m, reset, or a full history[0m
+[38;2;248;248;242m           rewriting command like filter-repo[2].[0m
+
+[38;2;248;248;242m   The easy case[0m
+[38;2;248;248;242m       Only works if the changes (patch IDs based on the diff contents) on[0m
+[38;2;248;248;242m       subsystem are literally the same before and after the rebase subsystem[0m
+[38;2;248;248;242m       did.[0m
+
+[38;2;248;248;242m       In that case, the fix is easy because git rebase knows to skip changes[0m
+[38;2;248;248;242m       that are already present in the new upstream (unless[0m
+[38;2;248;248;242m       [0m[38;2;166;226;46m--reapply-cherry-picks[0m[38;2;248;248;242m is given). So if you say (assuming you’re on[0m
+[38;2;248;248;242m       topic)[0m
+
+[38;2;248;248;242m               $ git rebase subsystem[0m
+
+[38;2;248;248;242m       you will end up with the fixed history[0m
+
+[38;2;248;248;242m               o---o---o---o---o---o---o---o  master[0m
+[38;2;248;248;242m                                            \[0m
+[38;2;248;248;242m                                             o'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'[0m[38;2;166;226;46m--o[0m[38;2;248;248;242m'  subsystem[0m
+[38;2;248;248;242m                                                              \[0m
+[38;2;248;248;242m                                                               *---*---*  topic[0m
+
+[38;2;248;248;242m   The hard case[0m
+[38;2;248;248;242m       Things get more complicated if the subsystem changes do not exactly[0m
+[38;2;248;248;242m       correspond to the ones before the rebase.[0m
+
+[38;2;248;248;242m           Note[0m
+[38;2;248;248;242m           While an "easy case recovery" sometimes appears to be successful[0m
+[38;2;248;248;242m           even in the hard case, it may have unintended consequences. For[0m
+[38;2;248;248;242m           example, a commit that was removed via git rebase [0m[38;2;166;226;46m--interactive[0m
+[38;2;248;248;242m           will be resurrected![0m
+
+[38;2;248;248;242m       The idea is to manually tell git rebase "where the old subsystem ended[0m
+[38;2;248;248;242m       and your topic began", that is, what the old merge base between them[0m
+[38;2;248;248;242m       was. You will have to find a way to name the last commit of the old[0m
+[38;2;248;248;242m       subsystem, for example:[0m
+
+[38;2;248;248;242m       •   With the subsystem reflog: after git fetch, the old tip of[0m
+[38;2;248;248;242m           subsystem is at subsystem@{1}. Subsequent fetches will increase the[0m
+[38;2;248;248;242m           number. (See [0m[38;2;166;226;46mgit-reflog[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m.)[0m
+
+[38;2;248;248;242m       •   Relative to the tip of topic: knowing that your topic has three[0m
+[38;2;248;248;242m           commits, the old tip of subsystem must be topic~3.[0m
+
+[38;2;248;248;242m       You can then transplant the old subsystem..topic to the new tip by[0m
+[38;2;248;248;242m       saying (for the reflog case, and assuming you are on topic already):[0m
+
+[38;2;248;248;242m               $ git rebase [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m subsystem subsystem@{1}[0m
+
+[38;2;248;248;242m       The ripple effect of a "hard case" recovery is especially bad: everyone[0m
+[38;2;248;248;242m       downstream from topic will now have to perform a "hard case" recovery[0m
+[38;2;248;248;242m       too![0m
+
+[38;2;253;151;31mREBASING MERGES[0m
+[38;2;248;248;242m       The interactive rebase command was originally designed to handle[0m
+[38;2;248;248;242m       individual patch series. As such, it makes sense to exclude merge[0m
+[38;2;248;248;242m       commits from the todo list, as the developer may have merged the[0m
+[38;2;248;248;242m       then-current master while working on the branch, only to rebase all the[0m
+[38;2;248;248;242m       commits onto master eventually (skipping the merge commits).[0m
+
+[38;2;248;248;242m       However, there are legitimate reasons why a developer may want to[0m
+[38;2;248;248;242m       recreate merge commits: to keep the branch structure (or "commit[0m
+[38;2;248;248;242m       topology") when working on multiple, inter-related branches.[0m
+
+[38;2;248;248;242m       In the following example, the developer works on a topic branch that[0m
+[38;2;248;248;242m       refactors the way buttons are defined, and on another topic branch that[0m
+[38;2;248;248;242m       uses that refactoring to implement a "Report a bug" button. The output[0m
+[38;2;248;248;242m       of git log [0m[38;2;166;226;46m--graph[0m[38;2;248;248;242m [0m[38;2;166;226;46m--format[0m[38;2;249;38;114m=[0m[38;2;253;151;31m%s[0m[38;2;248;248;242m [0m[38;2;166;226;46m-5[0m[38;2;248;248;242m may look like this:[0m
+
+[38;2;248;248;242m           *   Merge branch 'report-a-bug'[0m
+[38;2;248;248;242m           |\[0m
+[38;2;248;248;242m           | * Add the feedback button[0m
+[38;2;248;248;242m           * | Merge branch 'refactor-button'[0m
+[38;2;248;248;242m           |\ \[0m
+[38;2;248;248;242m           | |/[0m
+[38;2;248;248;242m           | * Use the Button class for all buttons[0m
+[38;2;248;248;242m           | * Extract a generic Button class from the DownloadButton one[0m
+
+[38;2;248;248;242m       The developer might want to rebase those commits to a newer master[0m
+[38;2;248;248;242m       while keeping the branch topology, for example when the first topic[0m
+[38;2;248;248;242m       branch is expected to be integrated into master much earlier than the[0m
+[38;2;248;248;242m       second one, say, to resolve merge conflicts with changes to the[0m
+[38;2;248;248;242m       DownloadButton class that made it into master.[0m
+
+[38;2;248;248;242m       This rebase can be performed using the [0m[38;2;166;226;46m--rebase-merges[0m[38;2;248;248;242m option. It will[0m
+[38;2;248;248;242m       generate a todo list looking like this:[0m
+
+[38;2;248;248;242m           label onto[0m
+
+[38;2;248;248;242m           # Branch: refactor-button[0m
+[38;2;248;248;242m           reset onto[0m
+[38;2;248;248;242m           pick 123456 Extract a generic Button class from the DownloadButton one[0m
+[38;2;248;248;242m           pick 654321 Use the Button class for all buttons[0m
+[38;2;248;248;242m           label refactor-button[0m
+
+[38;2;248;248;242m           # Branch: report-a-bug[0m
+[38;2;248;248;242m           reset refactor-button # Use the Button class for all buttons[0m
+[38;2;248;248;242m           pick abcdef Add the feedback button[0m
+[38;2;248;248;242m           label report-a-bug[0m
+
+[38;2;248;248;242m           reset onto[0m
+[38;2;248;248;242m           merge [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m a1b2c3 refactor-button # Merge 'refactor-button'[0m
+[38;2;248;248;242m           merge [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m 6f5e4d report-a-bug # Merge 'report-a-bug'[0m
+
+[38;2;248;248;242m       In contrast to a regular interactive rebase, there are label, reset and[0m
+[38;2;248;248;242m       merge commands in addition to pick ones.[0m
+
+[38;2;248;248;242m       The label command associates a label with the current HEAD when that[0m
+[38;2;248;248;242m       command is executed. These labels are created as worktree-local refs[0m
+[38;2;248;248;242m       (refs/rewritten/<label>) that will be deleted when the rebase finishes.[0m
+[38;2;248;248;242m       That way, rebase operations in multiple worktrees linked to the same[0m
+[38;2;248;248;242m       repository do not interfere with one another. If the label command[0m
+[38;2;248;248;242m       fails, it is rescheduled immediately, with a helpful message how to[0m
+[38;2;248;248;242m       proceed.[0m
+
+[38;2;248;248;242m       The reset command resets the HEAD, index and worktree to the specified[0m
+[38;2;248;248;242m       revision. It is similar to an exec git reset [0m[38;2;166;226;46m--hard[0m[38;2;248;248;242m <label>, but[0m
+[38;2;248;248;242m       refuses to overwrite untracked files. If the reset command fails, it is[0m
+[38;2;248;248;242m       rescheduled immediately, with a helpful message how to edit the todo[0m
+[38;2;248;248;242m       list (this typically happens when a reset command was inserted into the[0m
+[38;2;248;248;242m       todo list manually and contains a typo).[0m
+
+[38;2;248;248;242m       The merge command will merge the specified [0m[38;2;166;226;46mrevision[0m[38;2;249;38;114m([0m[38;2;190;132;255ms[0m[38;2;249;38;114m)[0m[38;2;248;248;242m into whatever is[0m
+[38;2;248;248;242m       HEAD at that time. With [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m <original-commit>, the commit message of the[0m
+[38;2;248;248;242m       specified merge commit will be used. When the [0m[38;2;166;226;46m-C[0m[38;2;248;248;242m is changed to a[0m
+[38;2;248;248;242m       lower-case [0m[38;2;166;226;46m-c[0m[38;2;248;248;242m, the message will be opened in an editor after a[0m
+[38;2;248;248;242m       successful merge so that the user can edit the message.[0m
+
+[38;2;248;248;242m       If a merge command fails for any reason other than merge conflicts[0m
+[38;2;248;248;242m       (i.e. when the merge operation did not even start), it is rescheduled[0m
+[38;2;248;248;242m       immediately.[0m
+
+[38;2;248;248;242m       By default, the merge command will use the ort merge strategy for[0m
+[38;2;248;248;242m       regular merges, and octopus for octopus merges. One can specify a[0m
+[38;2;248;248;242m       default strategy for all merges using the [0m[38;2;166;226;46m--strategy[0m[38;2;248;248;242m argument when[0m
+[38;2;248;248;242m       invoking rebase, or can override specific merges in the interactive[0m
+[38;2;248;248;242m       list of commands by using an exec command to call git merge explicitly[0m
+[38;2;248;248;242m       with a [0m[38;2;166;226;46m--strategy[0m[38;2;248;248;242m argument. Note that when calling git merge explicitly[0m
+[38;2;248;248;242m       like this, you can make use of the fact that the labels are[0m
+[38;2;248;248;242m       worktree-local refs (the ref refs/rewritten/onto would correspond to[0m
+[38;2;248;248;242m       the label onto, for example) in order to refer to the branches you want[0m
+[38;2;248;248;242m       to merge.[0m
+
+[38;2;248;248;242m       Note: the first command (label onto) labels the revision onto which the[0m
+[38;2;248;248;242m       commits are rebased; The name onto is just a convention, as a nod to[0m
+[38;2;248;248;242m       the [0m[38;2;166;226;46m--onto[0m[38;2;248;248;242m option.[0m
+
+[38;2;248;248;242m       It is also possible to introduce completely new merge commits from[0m
+[38;2;248;248;242m       scratch by adding a command of the form merge <merge-head>. This form[0m
+[38;2;248;248;242m       will generate a tentative commit message and always open an editor to[0m
+[38;2;248;248;242m       let the user edit it. This can be useful e.g. when a topic branch turns[0m
+[38;2;248;248;242m       out to address more than a single concern and wants to be split into[0m
+[38;2;248;248;242m       two or even more topic branches. Consider this todo list:[0m
+
+[38;2;248;248;242m           pick 192837 Switch from GNU Makefiles to CMake[0m
+[38;2;248;248;242m           pick 5a6c7e Document the switch to CMake[0m
+[38;2;248;248;242m           pick 918273 Fix detection of OpenSSL in CMake[0m
+[38;2;248;248;242m           pick afbecd http: add support for TLS v1.3[0m
+[38;2;248;248;242m           pick fdbaec Fix detection of cURL in CMake on Windows[0m
+
+[38;2;248;248;242m       The one commit in this list that is not related to CMake may very well[0m
+[38;2;248;248;242m       have been motivated by working on fixing all those bugs introduced by[0m
+[38;2;248;248;242m       switching to CMake, but it addresses a different concern. To split this[0m
+[38;2;248;248;242m       branch into two topic branches, the todo list could be edited like[0m
+[38;2;248;248;242m       this:[0m
+
+[38;2;248;248;242m           label onto[0m
+
+[38;2;248;248;242m           pick afbecd http: add support for TLS v1.3[0m
+[38;2;248;248;242m           label tlsv1.3[0m
+
+[38;2;248;248;242m           reset onto[0m
+[38;2;248;248;242m           pick 192837 Switch from GNU Makefiles to CMake[0m
+[38;2;248;248;242m           pick 918273 Fix detection of OpenSSL in CMake[0m
+[38;2;248;248;242m           pick fdbaec Fix detection of cURL in CMake on Windows[0m
+[38;2;248;248;242m           pick 5a6c7e Document the switch to CMake[0m
+[38;2;248;248;242m           label cmake[0m
+
+[38;2;248;248;242m           reset onto[0m
+[38;2;248;248;242m           merge tlsv1.3[0m
+[38;2;248;248;242m           merge cmake[0m
+
+[38;2;253;151;31mCONFIGURATION[0m
+[38;2;248;248;242m       rebase.backend[0m
+[38;2;248;248;242m           Default backend to use for rebasing. Possible choices are apply or[0m
+[38;2;248;248;242m           merge. In the future, if the merge backend gains all remaining[0m
+[38;2;248;248;242m           capabilities of the apply backend, this setting may become unused.[0m
+
+[38;2;248;248;242m       rebase.stat[0m
+[38;2;248;248;242m           Whether to show a diffstat of what changed upstream since the last[0m
+[38;2;248;248;242m           rebase. False by default.[0m
+
+[38;2;248;248;242m       rebase.autoSquash[0m
+[38;2;248;248;242m           If set to true enable [0m[38;2;166;226;46m--autosquash[0m[38;2;248;248;242m option by default.[0m
+
+[38;2;248;248;242m       rebase.autoStash[0m
+[38;2;248;248;242m           When set to true, automatically create a temporary stash entry[0m
+[38;2;248;248;242m           before the operation begins, and apply it after the operation ends.[0m
+[38;2;248;248;242m           This means that you can run rebase on a dirty worktree. However,[0m
+[38;2;248;248;242m           use with care: the final stash application after a successful[0m
+[38;2;248;248;242m           rebase might result in non-trivial conflicts. This option can be[0m
+[38;2;248;248;242m           overridden by the [0m[38;2;166;226;46m--no-autostash[0m[38;2;248;248;242m and [0m[38;2;166;226;46m--autostash[0m[38;2;248;248;242m options of git-[0m
+[38;2;248;248;242m           [0m[38;2;166;226;46mrebase[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m. Defaults to false.[0m
+
+[38;2;248;248;242m       rebase.missingCommitsCheck[0m
+[38;2;248;248;242m           If set to "warn", git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m will print a warning if some[0m
+[38;2;248;248;242m           commits are removed (e.g. a line was deleted), however the rebase[0m
+[38;2;248;248;242m           will still proceed. If set to "error", it will print the previous[0m
+[38;2;248;248;242m           warning and stop the rebase, git rebase [0m[38;2;166;226;46m--edit-todo[0m[38;2;248;248;242m can then be[0m
+[38;2;248;248;242m           used to correct the error. If set to "ignore", no checking is done.[0m
+[38;2;248;248;242m           To drop a commit without warning or error, use the drop command in[0m
+[38;2;248;248;242m           the todo list. Defaults to "ignore".[0m
+
+[38;2;248;248;242m       rebase.instructionFormat[0m
+[38;2;248;248;242m           A format string, as specified in [0m[38;2;166;226;46mgit-log[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m, to be used for the[0m
+[38;2;248;248;242m           todo list during an interactive rebase. The format will[0m
+[38;2;248;248;242m           automatically have the long commit hash prepended to the format.[0m
+
+[38;2;248;248;242m       rebase.abbreviateCommands[0m
+[38;2;248;248;242m           If set to true, git rebase will use abbreviated command names in[0m
+[38;2;248;248;242m           the todo list resulting in something like this:[0m
+
+[38;2;248;248;242m                       p deadbee The oneline of the commit[0m
+[38;2;248;248;242m                       p fa1afe1 The oneline of the next commit[0m
+[38;2;248;248;242m                       ...[0m
+
+[38;2;248;248;242m           instead of:[0m
+
+[38;2;248;248;242m                       pick deadbee The oneline of the commit[0m
+[38;2;248;248;242m                       pick fa1afe1 The oneline of the next commit[0m
+[38;2;248;248;242m                       ...[0m
+
+[38;2;248;248;242m           Defaults to false.[0m
+
+[38;2;248;248;242m       rebase.rescheduleFailedExec[0m
+[38;2;248;248;242m           Automatically reschedule exec commands that failed. This only makes[0m
+[38;2;248;248;242m           sense in interactive mode (or when an [0m[38;2;166;226;46m--exec[0m[38;2;248;248;242m option was provided).[0m
+[38;2;248;248;242m           This is the same as specifying the [0m[38;2;166;226;46m--reschedule-failed-exec[0m[38;2;248;248;242m option.[0m
+
+[38;2;248;248;242m       rebase.forkPoint[0m
+[38;2;248;248;242m           If set to false set [0m[38;2;166;226;46m--no-fork-point[0m[38;2;248;248;242m option by default.[0m
+
+[38;2;248;248;242m       sequence.editor[0m
+[38;2;248;248;242m           Text editor used by git rebase [0m[38;2;166;226;46m-i[0m[38;2;248;248;242m for editing the rebase[0m
+[38;2;248;248;242m           instruction file. The value is meant to be interpreted by the shell[0m
+[38;2;248;248;242m           when it is used. It can be overridden by the GIT_SEQUENCE_EDITOR[0m
+[38;2;248;248;242m           environment variable. When not configured the default commit[0m
+[38;2;248;248;242m           message editor is used instead.[0m
+
+[38;2;253;151;31mGIT[0m
+[38;2;248;248;242m       Part of the [0m[38;2;166;226;46mgit[0m[38;2;249;38;114m([0m[38;2;190;132;255m1[0m[38;2;249;38;114m)[0m[38;2;248;248;242m suite[0m
+
+[38;2;253;151;31mNOTES[0m
+[38;2;248;248;242m        1. revert-a-faulty-merge How-To[0m
+[38;2;248;248;242m           file:///usr/share/doc/git-doc/howto/revert-a-faulty-merge.html[0m
+
+[38;2;248;248;242m        2. filter-repo[0m
+[38;2;248;248;242m           https://github.com/newren/git-filter-repo[0m
+
+[38;2;253;151;31mGit 2.36.1                        05/07/2022                     GIT-REBASE(1)[0m
